@@ -13,12 +13,12 @@ module EmailSpec
     def click_email_link_matching(regex, email = current_email)
       url = links_in_email(email).detect { |link| link =~ regex }
       raise "No link found matching #{regex.inspect} in #{email.default_part_body}" unless url
-      visit request_uri(url)
+      visit url
     end
 
     def click_first_link_in_email(email = current_email)
       link = links_in_email(email).first
-      visit request_uri(link)
+      visit link
     end
 
     def open_email(address, opts={})
@@ -106,17 +106,11 @@ module EmailSpec
       url
     end
 
-    def request_uri(link)
-      return unless link
-      url = URI::parse(link)
-      url.fragment ? (url.request_uri + "#" + url.fragment) : url.request_uri
-    end
-
     # e.g. confirm in http://confirm
     def parse_email_for_explicit_link(email, regex)
       regex = /#{Regexp.escape(regex)}/ unless regex.is_a?(Regexp)
       url = links_in_email(email).detect { |link| link =~ regex }
-      request_uri(url)
+      url
     end
 
     # e.g. Click here in  <a href="http://confirm">Click here</a>
